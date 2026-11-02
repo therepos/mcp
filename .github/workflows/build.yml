@@ -1,0 +1,62 @@
+name: Build
+
+# One image per server folder: ghcr.io/<owner>/<server>:latest and :<sha>.
+# Add a server by adding its folder name to the matrix.
+# Pull requests build the image without publishing it, so main always builds.
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore: [ "**.md", "LICENSE" ]
+  pull_request:
+    paths-ignore: [ "**.md", "LICENSE" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        server: [ mcpshared ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Server code compiles
+        run: python3 -m py_compile common.py ${{ matrix.server }}/*.py
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.server }}/Dockerfile
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.server }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.server }}:${{ github.sha }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.server }}:buildcache
+          cache-to: ${{ github.event_name != 'pull_request' && format('type=registry,ref=ghcr.io/{0}/{1}:buildcache,mode=max', github.repository_owner, matrix.server) || '' }}
+
+  zipper-sync:
+    # mcpshared/zipper.py is a copy of the engine in therepos/skills; warn when they differ.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          curl -fsSL https://raw.githubusercontent.com/therepos/skills/main/zipper/scripts/zipper.py -o /tmp/upstream.py
+          diff -q /tmp/upstream.py mcpshared/zipper.py \
+            || echo "::warning::mcpshared/zipper.py differs from therepos/skills; re-copy it"

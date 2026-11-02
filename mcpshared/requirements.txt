@@ -1,0 +1,9 @@
+mcp>=2,<3
+uvicorn
+openpyxl
+pdfplumber
+python-docx
+python-pptx
+reportlab
+pypdf
+py7zr

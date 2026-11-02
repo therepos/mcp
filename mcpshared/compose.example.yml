@@ -1,0 +1,27 @@
+# mcpshared: expose one folder to Claude (claude.ai, Desktop, Code) or any MCP client.
+#
+# 1. Token:   openssl rand -hex 32
+# 2. Folder:  the data folder must be writable by the container user, e.g.
+#               sudo mkdir -p /srv/mcpshared/data && sudo chown -R 1000:1000 /srv/mcpshared/data
+# 3. Expose:  Cloudflare Tunnel public hostname -> http://<docker-host-ip>:8765
+# 4. Connect: claude.ai -> Settings -> Connectors -> Add custom connector
+#               URL https://<hostname>/<MCP_TOKEN>/mcp  (OAuth fields empty)
+
+services:
+  mcpshared:
+    image: ghcr.io/therepos/mcpshared:latest
+    container_name: mcpshared
+    restart: unless-stopped
+    user: "1000:1000"                 # owner of new files in the shared folder
+    ports:
+      - "8765:8765"
+    environment:
+      - MCP_TOKEN=${MCP_TOKEN}                # hint: random, 32+ chars
+      - MCP_PUBLIC_URL=${MCP_PUBLIC_URL}      # hint: e.g. https://files.example.com
+      - MCP_PRIVATE_URL=${MCP_PRIVATE_URL}    # hint: e.g. http://<docker-host-ip>:8765
+      - MCP_READ_ONLY=0                       # 1 = read-only share
+    volumes:
+      - /srv/shared:/share                    # the folder Claude may see
+      - /srv/mcpshared/data:/data             # saved settings
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
