@@ -68,7 +68,7 @@ appears in a link and rotating it voids every link. Default lifetime is 60
 minutes (`MCP_LINK_MINUTES`), maximum 7 days. Set `MCP_PUBLIC_URL` or the
 links only work on the LAN. Cloudflare's free plan caps uploads at 100 MB per file. Every link also comes
 as `lan_url`, which bypasses Cloudflare when you are at home or connected through a Tailscale subnet
-router. In Docker, set `MCP_PRIVATE_URL` to `http://<docker-host-ip>:8765` (the container cannot see
+router. In Docker, set `MCP_PRIVATE_URL` to `http://<docker-host-ip>:5001` (the container cannot see
 the host's LAN address); it also accepts a MagicDNS name. Per-file caps:
 `MCP_UPLOAD_MAX_BYTES`, `MCP_FETCH_MAX_BYTES` (4 GiB).
 
