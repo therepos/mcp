@@ -32,7 +32,7 @@
 #
 # Environment:
 #   MCP_PUBLIC_URL        https://<host> used in links (falls back to the LAN address)
-#   MCP_PRIVATE_URL       override for the private link, e.g. http://pve.tailnet.ts.net:8765
+#   MCP_PRIVATE_URL       override for the private link, e.g. http://pve.tailnet.ts.net:5001
 #   MCP_LINK_MINUTES      default link lifetime (60)
 #   MCP_UPLOAD_MAX_BYTES  per-file upload cap (default 4 GiB)
 #   MCP_FETCH_MAX_BYTES   fetch_url cap (default 4 GiB)
@@ -243,7 +243,7 @@ def register(
     read_only: bool,
     token: str,
     public_url: str = "",
-    port: int = 8765,
+    port: int = 5001,
 ) -> Callable[[Path], dict[str, Any]]:
     """Registers routes and tools; returns download_link_for(Path) for other modules."""
     key = hmac.new(token.encode(), b"mcpshared-files", hashlib.sha256).digest()

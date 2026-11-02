@@ -21,7 +21,7 @@
 #
 # Environment read here:
 #   MCP_TOKEN   secret, 16+ chars (required)
-#   MCP_PORT    listen port (default 8765)
+#   MCP_PORT    listen port (default 5001)
 #   MCP_HOST    bind address (default 0.0.0.0)
 # =============================================================================
 
@@ -103,7 +103,7 @@ def serve(mcp: MCPServer, *, extra_health: dict | None = None, open_prefixes: tu
     if len(token) < 16:
         sys.exit("MCP_TOKEN is too short (need 16+ chars)")
     host = env("MCP_HOST", "0.0.0.0")
-    port = int(env("MCP_PORT", "8765"))
+    port = int(env("MCP_PORT", "5001"))
     app = build_app(mcp, token=token, host=host, extra_health=extra_health, open_prefixes=open_prefixes)
     print(f"[mcp] {mcp.name}: listening on {host}:{port}", flush=True)
     uvicorn.run(app, host=host, port=port, log_level="info", proxy_headers=True, forwarded_allow_ips="*")

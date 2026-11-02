@@ -13,7 +13,7 @@ One folder per server, one Docker image per server.
 1. Copy [`mcpshared/compose.example.yml`](mcpshared/compose.example.yml), set the folder to expose
    and a token (`openssl rand -hex 32`), then `docker compose up -d`.
 2. Publish it over HTTPS, e.g. a Cloudflare Tunnel public hostname pointing at
-   `http://<docker-host-ip>:8765`.
+   `http://<docker-host-ip>:5001`.
 3. Add it to Claude: Settings → Connectors → Add custom connector, URL
    `https://<hostname>/<TOKEN>/mcp`, OAuth fields empty.
    Claude Code: `claude mcp add --transport http mcpshared https://<hostname>/<TOKEN>/mcp`

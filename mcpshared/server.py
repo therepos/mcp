@@ -464,7 +464,7 @@ register_extraction(mcp, _resolve, rel=_rel, guard=tool, read_only=READ_ONLY)
 # --- File transfer (signed links, fetch_url) ----------------------------------
 download_link_for = register_transfer(
     mcp, _resolve, rel=_rel, guard=tool, read_only=READ_ONLY,
-    token=env("MCP_TOKEN", required=True), public_url=PUBLIC_URL, port=int(env("MCP_PORT", "8765")),
+    token=env("MCP_TOKEN", required=True), public_url=PUBLIC_URL, port=int(env("MCP_PORT", "5001")),
 )
 
 # --- Build office files from text (write mode only) ----------------------------
