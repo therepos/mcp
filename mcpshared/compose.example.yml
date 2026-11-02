@@ -18,7 +18,7 @@ services:
     environment:
       - MCP_TOKEN=${MCP_TOKEN}                # hint: random, 32+ chars
       - MCP_PUBLIC_URL=${MCP_PUBLIC_URL}      # hint: e.g. https://files.example.com
-      - MCP_PRIVATE_URL=${MCP_PRIVATE_URL}    # hint: e.g. http://192.168.1.10:8765
+      - MCP_PRIVATE_URL=${MCP_PRIVATE_URL}    # hint: e.g. http://<docker-host-ip>:8765
       - MCP_READ_ONLY=0                       # 1 = read-only share
     volumes:
       - /srv/shared:/share                    # the folder Claude may see
