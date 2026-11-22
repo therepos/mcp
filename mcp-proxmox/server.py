@@ -131,7 +131,7 @@ mcp = MCPServer(
     NAME,
     title=TITLE,
     website_url=PUBLIC_URL or None,
-    icons=icons(STATIC),
+    icons=icons(STATIC, PUBLIC_URL),
     instructions=(
         f"Filesystem access to the shared folder '{ROOT.name}'"
         f"{' (read-only)' if READ_ONLY else ' (read/write)'}. "

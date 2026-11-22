@@ -14,6 +14,8 @@
 #   GET  /favicon.ico, /icon.png, /icon.svg
 #                                     unauthenticated connector icon, served from the
 #                                     server's static/ folder when present (else 404)
+#   GET  /                            blank page that only links the icon (favicon services
+#                                     read it); present only with the icon files, else 404
 #   POST /<MCP_TOKEN>/mcp             Streamable HTTP endpoint (secret path)
 #   POST /mcp  + Authorization: Bearer <MCP_TOKEN>
 #   anything else                     plain 404 (no OAuth discovery, nothing to probe)
@@ -39,7 +41,7 @@ from pathlib import Path
 from mcp.server.mcpserver import MCPServer
 from mcp.server.transport_security import TransportSecuritySettings
 from starlette.requests import Request
-from starlette.responses import FileResponse, JSONResponse, PlainTextResponse
+from starlette.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
 
 # Public icon files: claude.ai shows the connector's favicon, so these must be reachable without the token.
 ICON_FILES = {"/favicon.ico": "image/x-icon", "/icon.png": "image/png", "/icon.svg": "image/svg+xml"}
@@ -74,6 +76,8 @@ class TokenGate:
         path: str = scope.get("path", "")
         if path == "/healthz" or path in ICON_FILES or path.startswith(self.open_prefixes):
             return await self.app(scope, receive, send)
+        if path == "/" and scope.get("method") in ("GET", "HEAD"):
+            return await self.app(scope, receive, send)
         if path.startswith(self.prefix + "/") and hmac.compare_digest(path[1 : 1 + len(self.token)].encode(), self.token):
             scope = dict(scope)
             scope["path"] = path[len(self.prefix):]
@@ -100,6 +104,22 @@ def build_app(mcp: MCPServer, *, token: str, host: str, extra_health: dict | Non
                 return icon
             mcp.custom_route(route, methods=["GET", "HEAD"], include_in_schema=False)(make())
 
+    if static_dir and Path(static_dir, "favicon.ico").is_file():
+        # Favicon services (used for connector icons) read the home page first; it carries no content.
+        title = (mcp.title or mcp.name or "").replace("&", "&amp;").replace("<", "&lt;")
+        page = (
+            '<!doctype html><html><head><meta charset="utf-8"><meta name="robots" content="noindex">'
+            f"<title>{title}</title>"
+            '<link rel="icon" href="/favicon.ico" sizes="any">'
+            '<link rel="icon" href="/icon.svg" type="image/svg+xml">'
+            '<link rel="apple-touch-icon" href="/icon.png">'
+            "</head><body></body></html>"
+        )
+
+        @mcp.custom_route("/", methods=["GET", "HEAD"], include_in_schema=False)
+        async def home(_request: Request):  # type: ignore[no-untyped-def]
+            return HTMLResponse(page, headers={"Cache-Control": "public, max-age=86400"})
+
     inner = mcp.streamable_http_app(
         streamable_http_path="/mcp",
         json_response=True,
@@ -112,17 +132,19 @@ def build_app(mcp: MCPServer, *, token: str, host: str, extra_health: dict | Non
     return TokenGate(inner, token, open_prefixes)
 
 
-def icons(static_dir: str) -> list:  # type: ignore[type-arg]
-    """serverInfo icons (MCP spec) as data URIs, so clients need no extra request or public URL."""
+def icons(static_dir: str, public_url: str = "") -> list:  # type: ignore[type-arg]
+    """serverInfo icons (MCP spec): https links when the public URL is known, then data URIs."""
     import base64
 
     from mcp.types import Icon
 
+    files = [(n, m, s) for n, m, s in (("icon.png", "image/png", ["180x180"]), ("icon.svg", "image/svg+xml", ["any"]))
+             if Path(static_dir, n).is_file()]
     out = []
-    for name, mime, sizes in (("icon.svg", "image/svg+xml", ["any"]), ("icon.png", "image/png", ["180x180"])):
-        f = Path(static_dir, name)
-        if f.is_file():
-            out.append(Icon(src=f"data:{mime};base64,{base64.b64encode(f.read_bytes()).decode()}", mime_type=mime, sizes=sizes))
+    if public_url.startswith("https://"):
+        out += [Icon(src=f"{public_url.rstrip('/')}/{n}", mime_type=m, sizes=s) for n, m, s in files]
+    out += [Icon(src=f"data:{m};base64,{base64.b64encode(Path(static_dir, n).read_bytes()).decode()}", mime_type=m, sizes=s)
+            for n, m, s in files]
     return out
 
 
