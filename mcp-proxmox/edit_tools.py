@@ -41,7 +41,7 @@ def _need(module: str, pip_name: str):  # type: ignore[no-untyped-def]
     try:
         return __import__(module)
     except ImportError as e:
-        raise RuntimeError(f"{pip_name} is not installed in the server environment (it ships in the Docker image; when running from source, pip install -r mcpshared/requirements.txt).") from e
+        raise RuntimeError(f"{pip_name} is not installed in the server environment (it ships in the Docker image; when running from source, pip install -r mcp-proxmox/requirements.txt).") from e
 
 
 def _parse_pages(spec: str | None, total: int) -> list[int]:

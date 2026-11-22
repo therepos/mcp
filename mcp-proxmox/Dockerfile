@@ -1,6 +1,6 @@
-# mcpshared: one folder on your server, exposed to Claude / any MCP client.
+# mcp-proxmox: one folder on your server, exposed to Claude / any MCP client.
 # Build context is the repo root (common.py is shared by every server):
-#   docker build -f mcpshared/Dockerfile -t mcpshared .
+#   docker build -f mcp-proxmox/Dockerfile -t mcp-proxmox .
 FROM python:3.12-slim-bookworm
 
 # 7-Zip (transfer archives), tesseract (OCR), LibreOffice without GUI (office -> PDF), fonts for PDFs
@@ -12,12 +12,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY mcpshared/requirements.txt .
+COPY mcp-proxmox/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY common.py mcpshared/*.py ./
-COPY mcpshared/static ./static
-COPY mcpshared/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY common.py mcp-proxmox/*.py ./
+COPY mcp-proxmox/static ./static
+COPY mcp-proxmox/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # /share = the folder to expose (mount it). /data = small writable state
 # (saved zip password, LibreOffice profile). HOME points there so any user id works.

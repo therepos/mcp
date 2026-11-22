@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Purpose: MCP server that exposes one shared folder to Claude
 # =============================================================================
-# Runs as the ghcr.io/therepos/mcpshared image (see Dockerfile; server id: mcpshared).
+# Runs as the ghcr.io/therepos/mcp-proxmox image (see Dockerfile; server id: mcp-proxmox).
 # HTTP endpoints, token gate and health check come from ../common.py.
 # Document extraction (xlsx / pdf / docx -> text) lives in extraction_tools.py,
 # file transfer (signed download / upload links, fetch_url) in transfer.py and
@@ -16,7 +16,7 @@
 # Environment (in addition to MCP_TOKEN / MCP_PORT / MCP_HOST, see common.py):
 #   MCP_ROOT        directory to expose (required)
 #   MCP_READ_ONLY   1 = do not register write tools  (default 0)
-#   MCP_NAME        server name shown to Claude      (default "mcpshared")
+#   MCP_NAME        server name shown to Claude      (default "mcp-proxmox")
 #   MCP_TITLE       display name for MCP clients     (default "Proxmox")
 #   MCP_PUBLIC_URL  https://<host> used in download / upload links (optional)
 # =============================================================================
@@ -51,7 +51,7 @@ from zip_tools import register as register_zip  # noqa: E402
 
 # --- Config ------------------------------------------------------------------
 READ_ONLY = env_bool("MCP_READ_ONLY", False)
-NAME = env("MCP_NAME", "mcpshared")
+NAME = env("MCP_NAME", "mcp-proxmox")
 TITLE = env("MCP_TITLE", "Proxmox")
 STATIC = os.path.join(_HERE, "static")   # connector icon: favicon.ico, icon.png, icon.svg
 PUBLIC_URL = env("MCP_PUBLIC_URL", "")

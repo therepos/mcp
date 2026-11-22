@@ -10,13 +10,13 @@ The real compose files live in the private repo `therepos/docker` as `<id>-compo
 
 - `common.py`  shared plumbing: token gate, `/healthz`, `serve()`. Copied into every image.
 - `<id>/server.py` + tool modules, `<id>/requirements.txt`, `<id>/Dockerfile` (context = repo root).
-- `mcpshared/zipper.py` is a copy of `therepos/skills` `zipper/scripts/zipper.py`. Edit it there,
+- `mcp-proxmox/zipper.py` is a copy of `therepos/skills` `zipper/scripts/zipper.py`. Edit it there,
   then re-copy; CI warns when the copies differ.
 
 ## Rules
 
-- Server id: one lowercase word starting with `mcp`, used for folder, image, container and connector.
-- The label shown in claude.ai is a display title (`MCP_TITLE`, e.g. mcpshared = "Proxmox"); the
+- Server id: lowercase `mcp-<name>` (kebab-case), used for folder, image and container.
+- The label shown in claude.ai is a display title (`MCP_TITLE`, e.g. mcp-proxmox = "Proxmox"); the
   icon lives in `<id>/static/` (`icon.svg` source, `icon.png` 180px, `favicon.ico`).
 - All servers keep the endpoint contract in `common.py`: `/healthz`, `/<TOKEN>/mcp`, Bearer on
   `/mcp`, public icon files (`/favicon.ico`, `/icon.png`, `/icon.svg`), 404 otherwise. Do not add OAuth or change this without discussion.

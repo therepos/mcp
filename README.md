@@ -6,17 +6,17 @@ One folder per server, one Docker image per server.
 
 | Server | Image | What it does |
 |---|---|---|
-| [mcpshared](mcpshared/) | `ghcr.io/therepos/mcpshared` | One folder on your server: browse, search, read and write files; read, build and edit xlsx, docx, pptx and pdf; OCR; office to PDF; password-protected 7z transfer archives (split sets); signed download / upload links |
+| [mcp-proxmox](mcp-proxmox/) | `ghcr.io/therepos/mcp-proxmox` | One folder on your server: browse, search, read and write files; read, build and edit xlsx, docx, pptx and pdf; OCR; office to PDF; password-protected 7z transfer archives (split sets); signed download / upload links |
 
-## Quick start (mcpshared)
+## Quick start (mcp-proxmox)
 
-1. Copy [`mcpshared/compose.example.yml`](mcpshared/compose.example.yml), set the folder to expose
+1. Copy [`mcp-proxmox/compose.example.yml`](mcp-proxmox/compose.example.yml), set the folder to expose
    and a token (`openssl rand -hex 32`), then `docker compose up -d`.
 2. Publish it over HTTPS, e.g. a Cloudflare Tunnel public hostname pointing at
    `http://<docker-host-ip>:5001`.
 3. Add it to Claude: Settings → Connectors → Add custom connector, URL
    `https://<hostname>/<TOKEN>/mcp`, OAuth fields empty.
-   Claude Code: `claude mcp add --transport http mcpshared https://<hostname>/<TOKEN>/mcp`
+   Claude Code: `claude mcp add --transport http mcp-proxmox https://<hostname>/<TOKEN>/mcp`
 
 Updates: the image is rebuilt on every change to `main`; Watchtower (label in the example)
 or `docker compose pull && docker compose up -d` picks it up.
@@ -34,7 +34,7 @@ Every server exposes the same endpoints:
 | anything else | plain 404 |
 
 A server may open extra prefixes with `serve(..., open_prefixes=(...))`; routes there
-authenticate themselves. mcpshared opens `/files/` for signed, expiring links.
+authenticate themselves. mcp-proxmox opens `/files/` for signed, expiring links.
 
 ## Security
 
@@ -69,7 +69,7 @@ folder, the image, the container and the connector name.
    if __name__ == "__main__":
        serve(mcp)
    ```
-2. `<id>/requirements.txt`, `<id>/Dockerfile` (copy mcpshared's), `<id>/compose.example.yml`,
+2. `<id>/requirements.txt`, `<id>/Dockerfile` (copy mcp-proxmox's), `<id>/compose.example.yml`,
    `<id>/README.md`.
 3. Add `<id>` to the matrix in `.github/workflows/build.yml` and a row to the table above.
 

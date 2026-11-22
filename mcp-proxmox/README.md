@@ -1,4 +1,4 @@
-# mcpshared
+# mcp-proxmox
 
 Exposes one folder on your server to Claude (or any MCP client) over remote MCP. Every path is relative to the share
 root and jailed there (symlinks and `..` that leave the share are rejected).
@@ -55,7 +55,7 @@ Existing files are not overwritten unless `overwrite=true`.
 ## Transfer
 
 MCP cannot move a file between your device and the server: tool results pass through the
-model's context. Like other connectors, mcpshared hands out links instead.
+model's context. Like other connectors, mcp-proxmox hands out links instead.
 
 | Tool | What it does |
 |---|---|

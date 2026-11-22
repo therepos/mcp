@@ -19,7 +19,7 @@
 #   anything else                     plain 404 (no OAuth discovery, nothing to probe)
 #
 # A server may open extra path prefixes with serve(..., open_prefixes=("/files/",));
-# routes under them must authenticate themselves (mcpshared uses signed, expiring
+# routes under them must authenticate themselves (mcp-proxmox uses signed, expiring
 # links there). Everything else stays 404.
 #
 # Environment read here:
