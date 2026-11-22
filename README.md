@@ -28,6 +28,7 @@ Every server exposes the same endpoints:
 | Endpoint | Auth |
 |---|---|
 | `GET /healthz` | none |
+| `GET /favicon.ico`, `/icon.png`, `/icon.svg` | none (connector icon from `<id>/static/`) |
 | `POST /<TOKEN>/mcp` | token in the path (what claude.ai uses) |
 | `POST /mcp` | `Authorization: Bearer <TOKEN>` |
 | anything else | plain 404 |
