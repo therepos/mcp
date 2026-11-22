@@ -17,6 +17,7 @@
 #   MCP_ROOT        directory to expose (required)
 #   MCP_READ_ONLY   1 = do not register write tools  (default 0)
 #   MCP_NAME        server name shown to Claude      (default "mcpshared")
+#   MCP_TITLE       display name for MCP clients     (default "Proxmox")
 #   MCP_PUBLIC_URL  https://<host> used in download / upload links (optional)
 # =============================================================================
 
@@ -40,7 +41,7 @@ from mcp.types import ImageContent, TextContent, ToolAnnotations
 # common.py sits next to server.py in the image (/app), one level up in the repo.
 _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [_HERE, os.path.dirname(_HERE)]
-from common import env, env_bool, serve  # noqa: E402
+from common import env, env_bool, icons, serve  # noqa: E402
 from extraction_tools import register as register_extraction  # noqa: E402
 from transfer import register as register_transfer  # noqa: E402
 from build_tools import register as register_build  # noqa: E402
@@ -51,6 +52,8 @@ from zip_tools import register as register_zip  # noqa: E402
 # --- Config ------------------------------------------------------------------
 READ_ONLY = env_bool("MCP_READ_ONLY", False)
 NAME = env("MCP_NAME", "mcpshared")
+TITLE = env("MCP_TITLE", "Proxmox")
+STATIC = os.path.join(_HERE, "static")   # connector icon: favicon.ico, icon.png, icon.svg
 PUBLIC_URL = env("MCP_PUBLIC_URL", "")
 ROOT = Path(os.path.realpath(env("MCP_ROOT", required=True)))
 if not ROOT.is_dir():
@@ -126,6 +129,9 @@ def _require_write() -> None:
 # --- Server ------------------------------------------------------------------
 mcp = MCPServer(
     NAME,
+    title=TITLE,
+    website_url=PUBLIC_URL or None,
+    icons=icons(STATIC),
     instructions=(
         f"Filesystem access to the shared folder '{ROOT.name}'"
         f"{' (read-only)' if READ_ONLY else ' (read/write)'}. "
@@ -483,4 +489,4 @@ if not READ_ONLY:
 # --- Run ---------------------------------------------------------------------
 if __name__ == "__main__":
     print(f"[mcp] {NAME}: serving {ROOT} {'read-only' if READ_ONLY else 'read/write'}", flush=True)
-    serve(mcp, extra_health={"read_only": READ_ONLY}, open_prefixes=("/files/",))
+    serve(mcp, extra_health={"read_only": READ_ONLY}, open_prefixes=("/files/",), static_dir=STATIC)

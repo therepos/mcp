@@ -16,6 +16,7 @@ COPY mcpshared/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY common.py mcpshared/*.py ./
+COPY mcpshared/static ./static
 COPY mcpshared/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # /share = the folder to expose (mount it). /data = small writable state
