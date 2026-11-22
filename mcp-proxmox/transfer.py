@@ -246,8 +246,7 @@ def register(
     port: int = 5001,
 ) -> Callable[[Path], dict[str, Any]]:
     """Registers routes and tools; returns download_link_for(Path) for other modules."""
-    # "mcpshared" is the server's former id; kept so links issued before the rename stay valid.
-    key = hmac.new(token.encode(), b"mcpshared-files", hashlib.sha256).digest()
+    key = hmac.new(token.encode(), b"mcp-files", hashlib.sha256).digest()
     default_minutes = _int_env("MCP_LINK_MINUTES", 60)
     upload_max = _int_env("MCP_UPLOAD_MAX_BYTES", 4 << 30)
     fetch_max = _int_env("MCP_FETCH_MAX_BYTES", 4 << 30)
