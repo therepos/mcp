@@ -19,7 +19,8 @@ The real compose files live in the private repo `therepos/docker` as `<id>-compo
 - The label shown in claude.ai is a display title (`MCP_TITLE`, e.g. mcp-proxmox = "Proxmox"); the
   icon lives in `<id>/static/` (`icon.svg` source, `icon.png` 180px, `favicon.ico`).
 - All servers keep the endpoint contract in `common.py`: `/healthz`, `/<TOKEN>/mcp`, Bearer on
-  `/mcp`, public icon files (`/favicon.ico`, `/icon.png`, `/icon.svg`), 404 otherwise. Do not add OAuth or change this without discussion.
+  `/mcp`, public icon files (`/favicon.ico`, `/icon.png`, `/icon.svg`) and a blank `GET /` linking them,
+  404 otherwise. Do not add OAuth or change this without discussion.
 - Python deps go in `<id>/requirements.txt`; optional imports stay lazy so the server still boots
   and the tool says what is missing. Host programs go in the Dockerfile.
 - Every path a tool takes is relative to the share root and jailed there.
