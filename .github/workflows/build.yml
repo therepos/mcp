@@ -20,7 +20,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        server: [ mcpshared ]
+        server: [ mcp-proxmox ]
     steps:
       - uses: actions/checkout@v4
 
@@ -67,11 +67,11 @@ jobs:
           docker logs smoke
 
   zipper-sync:
-    # mcpshared/zipper.py is a copy of the engine in therepos/skills; warn when they differ.
+    # mcp-proxmox/zipper.py is a copy of the engine in therepos/skills; warn when they differ.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           curl -fsSL https://raw.githubusercontent.com/therepos/skills/main/zipper/scripts/zipper.py -o /tmp/upstream.py
-          diff -q /tmp/upstream.py mcpshared/zipper.py \
-            || echo "::warning::mcpshared/zipper.py differs from therepos/skills; re-copy it"
+          diff -q /tmp/upstream.py mcp-proxmox/zipper.py \
+            || echo "::warning::mcp-proxmox/zipper.py differs from therepos/skills; re-copy it"

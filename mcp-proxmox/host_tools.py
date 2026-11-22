@@ -1,4 +1,4 @@
-# Purpose: archives, OCR and office-to-PDF conversion for mcpshared
+# Purpose: archives, OCR and office-to-PDF conversion for mcp-proxmox
 # =============================================================================
 # Loaded by server.py:
 #
@@ -312,7 +312,7 @@ def register(
         try:
             import pdfplumber
         except ImportError as e:
-            raise RuntimeError("pdfplumber is not installed; pip install -r mcpshared/requirements.txt.") from e
+            raise RuntimeError("pdfplumber is not installed; pip install -r mcp-proxmox/requirements.txt.") from e
         dpi = max(150, min(int(dpi), 300))
         chunks: list[str] = []
         used = 0

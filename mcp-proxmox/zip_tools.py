@@ -1,4 +1,4 @@
-# Purpose: password-protected 7z transfer archives for mcpshared (zip, unzip, split sets)
+# Purpose: password-protected 7z transfer archives for mcp-proxmox (zip, unzip, split sets)
 # =============================================================================
 # Loaded by server.py (write mode only):
 #

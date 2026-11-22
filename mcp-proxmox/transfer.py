@@ -1,4 +1,4 @@
-# Purpose: file transfer for mcpshared: signed download / upload links and server-side fetch
+# Purpose: file transfer for mcp-proxmox: signed download / upload links and server-side fetch
 # =============================================================================
 # Loaded by server.py:
 #
@@ -246,6 +246,7 @@ def register(
     port: int = 5001,
 ) -> Callable[[Path], dict[str, Any]]:
     """Registers routes and tools; returns download_link_for(Path) for other modules."""
+    # "mcpshared" is the server's former id; kept so links issued before the rename stay valid.
     key = hmac.new(token.encode(), b"mcpshared-files", hashlib.sha256).digest()
     default_minutes = _int_env("MCP_LINK_MINUTES", 60)
     upload_max = _int_env("MCP_UPLOAD_MAX_BYTES", 4 << 30)
@@ -416,7 +417,7 @@ def register(
                 return super().redirect_request(req, fp, code, msg, headers, newurl)
 
         opener = urllib.request.build_opener(_Redirects())
-        req = urllib.request.Request(url, headers={"User-Agent": "mcpshared/1.0"})
+        req = urllib.request.Request(url, headers={"User-Agent": "mcp-proxmox/1.0"})
         try:
             resp = opener.open(req, timeout=30)
         except urllib.error.HTTPError as e:

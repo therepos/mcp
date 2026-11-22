@@ -1,4 +1,4 @@
-# Purpose: document extraction tools for mcpshared (xlsx, pdf, docx -> text)
+# Purpose: document extraction tools for mcp-proxmox (xlsx, pdf, docx -> text)
 # =============================================================================
 # Loaded by server.py:
 #
@@ -66,7 +66,7 @@ def _need(module: str, pip_name: str):  # type: ignore[no-untyped-def]
     except ImportError as e:
         raise RuntimeError(
             f"{pip_name} is not installed in the server environment "
-            "(it ships in the Docker image; from source: pip install -r mcpshared/requirements.txt)."
+            "(it ships in the Docker image; from source: pip install -r mcp-proxmox/requirements.txt)."
         ) from e
 
 

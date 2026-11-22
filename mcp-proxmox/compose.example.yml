@@ -1,4 +1,4 @@
-# mcpshared: expose one folder to Claude (claude.ai, Desktop, Code) or any MCP client.
+# mcp-proxmox: expose one folder to Claude (claude.ai, Desktop, Code) or any MCP client.
 #
 # 1. Token:   openssl rand -hex 32
 # 2. Expose:  Cloudflare Tunnel public hostname -> http://<docker-host-ip>:5001
@@ -7,9 +7,9 @@
 #    claude.ai shows the favicon served at https://<hostname>/favicon.ico as the connector icon.
 
 services:
-  mcpshared:
-    image: ghcr.io/therepos/mcpshared:latest
-    container_name: mcpshared
+  mcp-proxmox:
+    image: ghcr.io/therepos/mcp-proxmox:latest
+    container_name: mcp-proxmox
     restart: unless-stopped
     ports:
       - "5001:5001"
@@ -23,6 +23,6 @@ services:
       - PGID=1000
     volumes:
       - /srv/shared:/share                    # the folder Claude may see
-      - /srv/mcpshared/data:/data             # saved settings
+      - /srv/mcp-proxmox/data:/data           # saved settings
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
